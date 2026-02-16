@@ -1,0 +1,1 @@
+export {default as collectionsCrud} from './collections.controller.js'

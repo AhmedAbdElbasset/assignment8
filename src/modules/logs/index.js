@@ -1,0 +1,1 @@
+export {default as logsCrud} from './logs.controller.js'

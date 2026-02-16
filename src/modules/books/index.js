@@ -1,0 +1,1 @@
+export {default as bookCrud} from './books.controller.js'
