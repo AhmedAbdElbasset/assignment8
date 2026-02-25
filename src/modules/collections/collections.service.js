@@ -1,41 +1,45 @@
-import { bookModle } from "../../DB/index.js";
-import mongoose from "mongoose";
+import { db } from "../../DB/connection.js";
 
 export const createBooksCollection = async () => {
-  const db = mongoose.connection.db;
-
-  const result = await db.createCollection("books", {
-    validator: {
-      $jsonSchema: {
-        bsonType: "object",
-        required: ["title"],
-        properties: {
-          title: {
-            bsonType: "string",
-            minLength: 1,
-          },
-        },
-      },
+  const bookSchema = {
+    bsonType: "object",
+    required: ["title", "author", "year", "genres"],
+    properties: {
+      title: { bsonType: "string", minLength: 1 },
+      author: { bsonType: "string" },
+      year: { bsonType: "number" },
+      genres: { bsonType: 'array',items:{bsonType:"string"} },
     },
+  };
+  const bookModle = await db.createCollection("book", {
+    validator: { $jsonSchema: bookSchema },
   });
-  return result;
+
+  return bookModle;
 };
 //  Create an implicit collection
 export const insertAuthor = async (authorData) => {
-  const db = mongoose.connection.db;
   const result = await db.collection("authors").insertOne(authorData);
   return result;
 };
 
 export const createCappedLogsCollection = async () => {
-  const db = mongoose.connection.db;
+  const logSchema = {
+    bsonType: "object",
+    required: ["action", "bookId"],
+    properties: {
+      action: { bsonType: "string" },
+      bookId: { bsonType: "objectId", },
+    },
+  };
 
-  await db.createCollection("logs", {
+  const logModel = await db.createCollection("log", {
     capped: true,
-    size: 1024 * 1024 
+    size: 1024 * 1024,
+    validator: { $jsonSchema: logSchema },
   });
 
-  return "logs";
+  return {message:"log model created"};
 };
 export const createTitleIndex = async () => {
   const result = await bookModle.collection.createIndex({ title: 1 });

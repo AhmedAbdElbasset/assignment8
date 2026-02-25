@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
+import { db } from "../../DB/connection.js";
 export const createLog = async (inputs) => {
-  const db = mongoose.connection.db;
   const { book_id, action } = inputs;
   const result = db
-    .collection("logs")
-    .insertOne({ book_id: new ObjectId(book_id), action });
+    .collection("log")
+    .insertOne({ bookId: new ObjectId(book_id), action });
   return result;
 };
